@@ -24,7 +24,7 @@ function effect(n){
     return eff
 }
    
-function getSaclingType(n){
+function getScalingType(n){
     //options:
     // exp, finite, once,	
 	// dexp (double exp), pexp ( polynomial exp or 2^(P(x)) )
@@ -46,3 +46,36 @@ function getSaclingType(n){
     if (n<100) return "pdexp"
     return "texp"
 }
+
+function factorial(n){
+	if n < 0 || n == 1 || n == 0 : return 1
+	return factorial(n-1)*n
+}
+
+function choose(n,k){
+	return Math.round(factorial(n)/factorial(k)/factorial(n-k))
+}
+
+function getScalingInfo(n){
+	type = getScalingType(n)
+	//either hardcode or make something simple for the once/finite stuffs
+	if type == "exp"{
+		return {type: "exp",
+		coeff: new Decmal(10**(n*n)),
+		base: 10**(factorial(Math.ceil(n/3)))
+			   }
+	}
+	if type == "dexp"{
+		return {type: "dexp",
+		coeff: Decimal.pow(10,n==9?10:(n%4==0?3:10)*(n-3)*(n-3)*(n-3)),
+		base: n==4?3:(Math.max(2.1,n/5,n*n/40**2)),
+		exp:{
+		coeff: Math.ceil(n/8),
+		base: 1+n/100+n*n/10**6+(n<20?.2:.1)
+		}
+	} //NOT DONE
+	
+	
+}
+
+
