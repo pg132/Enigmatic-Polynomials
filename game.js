@@ -182,19 +182,20 @@ function scaling(amount,data){ //it should return the next cost
 	}
 	return ["you messed up",data,amount]
 }
-
-
-function getNextGenCost(n) {
 	
-	
-	
-}
-
-
 
 
 
 //saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+//saving functions (currently incomplete) 
+	
 
 function save() {
   localStorage.setItem("save test", JSON.stringify(user));
