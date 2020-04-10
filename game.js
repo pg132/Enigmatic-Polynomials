@@ -6,15 +6,14 @@ function getDefaultSave(){ //name says it all lol
 	return {
 	polynomials: new Decimal(10),
 	g1: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
-		type: "exp",
-		exp: 10} //might need to make this a decimal
+			type: "exp",
+			base: new Decimal(1),
+			exp: 10} //might need to make this a decimal
 	},
 	g2: {
-		cost: new Decimal(10), //tbd
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: { //tbd
@@ -22,17 +21,15 @@ function getDefaultSave(){ //name says it all lol
 		exp: 100} //might need to make this a decimal
 	},
 	g3: {
-		cost: new Decimal(1000),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
 		type: "pexp",
 		exp: 10, //might need to make this a decimal
-		p: function (x){return x.plus(x.pow(2).times(.001))} //not sure this syntax works and also prb wanna change the function
+		polynomial: function (x){return x.plus(x.pow(2).times(.001))} //not sure this syntax works and also prb wanna change the function
 		} 
 	}, // also from here on out everything (inside) is left untouched
 	g4: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -40,7 +37,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g5: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -56,7 +52,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g6: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -64,7 +59,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g7: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -72,7 +66,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g8: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -80,7 +73,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g9: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -88,7 +80,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g10: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -96,7 +87,6 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	g11: {
-		cost: new Decimal(1),
 		amount: new Decimal(0),
 		bought: new Decimal(0),
 		scaling: {
@@ -104,10 +94,10 @@ function getDefaultSave(){ //name says it all lol
 		exp: 10} //might need to make this a decimal
 	},
 	unaccessible: {
-		amount: new Decimal(0)
-		upgrades: []
-		possibleUpgrades: [] //tbd
-		costs: []//for said tbd upgs
+		amount: new Decimal(0),
+		upgrades: [],
+		possibleUpgrades: [], //tbd
+		costs: [],//for said tbd upgs
 		ab: {
 			unlocked: [],
 			Times: [],
@@ -116,11 +106,11 @@ function getDefaultSave(){ //name says it all lol
 		}
 	},
 	upgrades: {
-		purchased: [] //this list contains elements in which are the number of upgrades of i+1 in the i-th slot
-		costs: [] //for abv upgrades
-		kept: [] //contains true/flase
-		ab: [] //contains true/false
-	} //idk what else is needed but ig this is good enough for now
+		purchased: [], //this list contains elements in which are the number of upgrades of i+1 in the i-th slot
+		costs: [], //for abv upgrades
+		kept: [], //contains true/flase
+		ab: [], //contains true/false
+	}, //idk what else is needed but ig this is good enough for now
 	last: new Date().getTime()
 }
 
@@ -144,8 +134,61 @@ function getProduction(n) { //n is the gen number
 	//ok you can do other things here
 }
 
+// FOR DIFFERENT SCALINGS WHAT IS IN DATA?
+// EXP: coeff, base 
+// FINITE: array named l
+// ONCE: base 
+// DEXP: coeff, base, exp:{coeff,base}
+// PEXP: coeff, base, polynomial (function)
+// PDEXP: coeff, base, exp:{coeff,base,polynomial}
+// TEXP: coeff, base, exp:{coeff,base,exp2:{coeff,base}}
+// EXPP: coeff, polynomial
+	
+	
+function scaling(amount,data){ //it should return the next cost
+	// valid things for data.type are:
+	// exp, finite, once,	
+	// dexp (double exp), pexp ( polynomial exp or 2^(P(x)) )
+	// pdexp (poly 2x exp), texp (triple exp), expp P(x)**x
+	if (data.type == "exp"){
+		mult = Decimal.pow(data.base,amount)
+		return data.coeff.times(mult)
+	}
+	if (data.type == "finite"){
+		return data.l[amount]
+	}
+	if (data.type == "once") return data.base
+	if (data.type == "dexp"){
+		exponent = (data.exp.base).pow(amount).times(data.exp.coeff)
+		return Decimal.pow(data.base,exponent).times(data.coeff)
+	}
+	if (data.type == "pexp"){
+		exponent = data.polynomial(amount)
+		return Decimal.pow(data.base,exponent).times(data.coeff)
+	}
+	if (data.type == "pdexp"){
+		exponent1 = data.exp.polynomial(amount)
+		exponent2 = Decimal.pow(data.exp.base,exponent1).times(data.exp.coeff)
+		return Decimal.pow(data.base,exponent2).times(data.coeff)
+	}
+	if (data.type = "texp"){
+		exponent1 = Decimal.pow(data.exp.exp2.base,amount).times(data.exp.exp2.coeff)
+		exponent2 = Decimal.pow(data.exp.base,exponent1).times(data.exp.coeff)
+		return Decimal.pow(data.base,exponent2).times(data.coeff)
+	}
+	if (data.type = "expp") {
+		base = data.polynomial(amount)
+		return Decimal.pow(base,amount).times(data.coeff)
+	}
+	return ["you messed up",data,amount]
+}
 
 
+function getNextGenCost(n) {
+	
+	
+	
+}
 
 
 
