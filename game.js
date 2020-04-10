@@ -43,14 +43,6 @@ function getDefaultSave(){ //name says it all lol
 		type: "exp",
 		exp: 10} //might need to make this a decimal
 	},
-	g1: {
-		cost: new Decimal(1),
-		amount: new Decimal(0),
-		bought: new Decimal(0),
-		scaling: {
-		type: "exp",
-		exp: 10} //might need to make this a decimal
-	},
 	g6: {
 		amount: new Decimal(0),
 		bought: new Decimal(0),
@@ -100,16 +92,21 @@ function getDefaultSave(){ //name says it all lol
 		costs: [],//for said tbd upgs
 		ab: {
 			unlocked: [],
-			Times: [],
-			Costs: [],
-			Last: [] // fill this with new Date().getTime()
+			times: [],
+			costs: [],
+			last: [] // fill this with new Date().getTime()
 		}
 	},
 	upgrades: {
 		purchased: [], //this list contains elements in which are the number of upgrades of i+1 in the i-th slot
 		costs: [], //for abv upgrades
 		kept: [], //contains true/flase
-		ab: [], //contains true/false
+		ab:{
+			unlocked: [], //contains true/false
+			times: [],
+			costs: [],
+			last: []
+		}
 	}, //idk what else is needed but ig this is good enough for now
 	last: new Date().getTime()
 }
