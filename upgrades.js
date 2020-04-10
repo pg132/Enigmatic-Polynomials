@@ -7,11 +7,12 @@
 // 5. resetting an upgrade
 // 6. resetting all upgrades
 
-function nextCost(n): // upgrade n
+function nextCost(n){ // upgrade n
     i = 0
     //get scaling cost stuffs idk lol
+}
    
-function effect(n):
+function effect(n){
     poly = getPolynomial(n)
     deg = poly.length-1
     sum = new Decimal(0)
@@ -20,5 +21,28 @@ function effect(n):
     }
     eff = sum.times(n) //base mult; eff stands for effect
     // ok you can do some stuff here
-    return e
+    return eff
+}
    
+function getSaclingType(n){
+    //options:
+    // exp, finite, once,	
+	// dexp (double exp), pexp ( polynomial exp or 2^(P(x)) )
+	// pdexp (poly 2x exp), texp (triple exp), expp ( P(x)**x )
+    once = []
+    finite = []
+    if (once.includes(n)) return "once"
+    if (finite.includes(n)) return "finite"
+    for (i = 2; i <= Math.ceil(Math.log2(n));i++){
+        if (Math.ceil(n**(1/i))**i) == n { //perfect nth power
+            if (i >= 5) return "texp"
+            return "dexp"
+        }
+    }
+    if (n<10) return "exp"
+    if (n < 30) return "expp"
+    if ((n%4 == n%20 || n%6 == n%9) && n%3 == 1) return "expp"
+    if ( n%6 == 0 || n%10 == 0 || n%15 == 0) return "dexp"
+    if (n<100) return "pdexp"
+    return "texp"
+}
