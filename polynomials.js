@@ -20,7 +20,7 @@ function getPolynomial(x){
 	}
     coeff[0] = 1
     x = q[0]
-    if deg == 0 { return [Math.round((x-1)/2)]}
+    if deg == 0 {return [Math.round((x-1)/2)]}
     for (i=0;i<deg;i++){
         //we are looking at the deg-i -th coeff
         //we know x is odd
