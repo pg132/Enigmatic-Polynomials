@@ -151,7 +151,80 @@ function getProduction(n) { //n is the gen number
 
 
 
+//saving functions (currently incomplete) 
 
+function save() {
+  localStorage.setItem("save test", JSON.stringify(user));
+}
+
+function load() {
+  var save = JSON.parse(localStorage.getItem("save test"));
+  if (localStorage.getItem("save test") !== null) {
+    user = convertSave(save, getDefaultSave());
+    updateSave()
+  }
+  // document.getElementById("notation").innerHTML = "Notation: " + user.options.notation
+  return user;
+}
+
+function convertSave(obj, obj2) {
+  if (typeof obj === "object" && obj !== null && typeof obj2 === "object" && obj2 !== null) {
+    for (var i in obj) {
+      obj2[i] = convertSave(obj[i], obj2[i]);
+    }
+    return obj2;
+  } else {
+    return obj;
+  }
+}
+
+function expo() {
+  var exp = btoa(JSON.stringify(user));
+  let output = document.getElementById('export thing');
+  let parent = output.parentElement;
+
+  parent.style.display = "";
+  output.value = exp;
+
+  output.onblur = function() {
+    parent.style.display = "none";
+  }
+  output.focus();
+  output.select();
+
+  try {
+    if (document.execCommand('copy')) {
+      document.getElementById("export status").style.display = "";
+      output.blur();
+      document.getElementById("export").innerHTML = "Close";
+      document.getElementById("export").onclick = function() {
+        close();
+      };
+    }
+  } catch (ex) {
+    // aww
+  }
+}
+
+function close() {
+  document.getElementById("export status").style.display = "none";
+  document.getElementById("export").innerHTML = "Export";
+  document.getElementById("export").onclick = function() {
+    expo();
+  };
+}
+
+function impo() {
+  var save = window.prompt("Paste your save here");
+  if (save === "") {
+    //:C
+  } else {
+    save = JSON.parse(atob(save));
+
+    user = convertSave(save, getDefaultSave());
+    updateSave()
+  }
+}
 
 
 
